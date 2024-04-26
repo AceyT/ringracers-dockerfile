@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  rr_server:
+    image: ringracer
+    environment:
+      - ADVERTISE="Yes"
+    tty: true
+    stdin_open: true
+    ports:
+      - "5029:5029/udp"
+    volumes:
+      - ./ringracers/data:/home/ringracers/.ringracers
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "./entrypoint.sh monitor"]
+      interval: 30s
+      start_period: 30s

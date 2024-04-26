@@ -1,0 +1,7 @@
+data/addons
+data/logs
+data/latest-log.txt
+data/ringdata.dat
+data/ringprofiles.prf
+data/srvbans.json
+data/srvstats.dat
