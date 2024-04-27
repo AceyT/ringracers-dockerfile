@@ -1,36 +1,37 @@
 FROM arm64v8/debian:bookworm as builder
 
 # Ref: https://git.do.srb2.org/KartKrew/RingRacers
-ARG RR_VER="v2.0"
 
 RUN apt-get update && \
-    apt-get install -y \
-    build-essential \
-    git \
-    cmake \
-    libcurl4-openssl-dev \
-    libgme-dev \
-    libopenmpt-dev \
-    libminiupnpc-dev \
-    libogg-dev \
-    libpng-dev \
-    libsdl2-dev \
-    libsdl2-mixer-dev \
-    libvorbis-dev \
-    libvpx-dev \
-    libyuv-dev \
-    nasm \
-    ninja-build \
-    p7zip-full \
-    pkg-config \
-    zlib1g-dev \
-    && apt-get clean
+apt-get install -y \
+build-essential \
+git \
+cmake \
+libcurl4-openssl-dev \
+libgme-dev \
+libopenmpt-dev \
+libminiupnpc-dev \
+libogg-dev \
+libpng-dev \
+libsdl2-dev \
+libsdl2-mixer-dev \
+libvorbis-dev \
+libvpx-dev \
+libyuv-dev \
+nasm \
+ninja-build \
+p7zip-full \
+pkg-config \
+zlib1g-dev \
+&& apt-get clean
 
 RUN adduser --disabled-password -gecos "" ringracers
 USER ringracers
+ARG RR_VER="v2.0"
 
-RUN git clone https://git.do.srb2.org/KartKrew/RingRacers/-/tree/v2.0 /home/ringracers/rr_git
+RUN git clone https://git.do.srb2.org/KartKrew/RingRacers.git /home/ringracers/rr_git
 WORKDIR /home/ringracers/rr_git
+RUN git checkout tags/${RR_VER}
 COPY --chown=ringracers CMakeLists_patch.txt ./src/CMakeLists.txt
 RUN cmake --preset ninja-release
 RUN cmake --build --preset ninja-release
@@ -44,8 +45,8 @@ RUN apt-get -y install wget unzip
 RUN mkdir /RingRacers
 WORKDIR /RingRacers
 RUN wget ${ASSETS_URL}
-RUN unzip Dr.Robotnik.s-Ring-Racers-v2.0-Assets.zip
-RUN rm Dr.Robotnik.s-Ring-Racers-v2.0-Assets.zip
+RUN unzip Dr.Robotnik.s-Ring-Racers-${RR_VER}-Assets.zip
+RUN rm Dr.Robotnik.s-Ring-Racers-${RR_VER}-Assets.zip
 
 ###
 
