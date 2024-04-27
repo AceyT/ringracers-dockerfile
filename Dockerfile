@@ -39,7 +39,8 @@ RUN cmake --build --preset ninja-release
 ###
 
 FROM arm64v8/debian:bookworm as assets
-ARG ASSETS_URL="https://github.com/KartKrewDev/RingRacers/releases/download/v2.0/Dr.Robotnik.s-Ring-Racers-v2.0-Assets.zip"
+ARG RR_VER="v2.0"
+ARG ASSETS_URL="https://github.com/KartKrewDev/RingRacers/releases/download/${RR_VER}/Dr.Robotnik.s-Ring-Racers-${RR_VER}-Assets.zip"
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get -y install wget unzip
 RUN mkdir /RingRacers
