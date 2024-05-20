@@ -1,7 +1,7 @@
 # RingRacer Dockerfile for debian ARMv8
 ## (compatible with Raspberry Pi 4)
 
-## Ringracer V2.1
+## Ringracer V2.2
 
 Do not hesitate to modify the content of `data/ringserv.cfg` to your liking
 Also, you may need to change the volume in the `docker-compose.yml`
