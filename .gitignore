@@ -5,3 +5,6 @@ data/ringdata.dat
 data/ringprofiles.prf
 data/srvbans.json
 data/srvstats.dat
+
+test_background.bat
+test_interactive.bat
