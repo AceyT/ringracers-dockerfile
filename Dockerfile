@@ -27,7 +27,7 @@ zlib1g-dev \
 
 RUN adduser --disabled-password -gecos "" ringracers
 USER ringracers
-ARG RR_VER="v2.2"
+ARG RR_VER="v2.3"
 
 RUN git clone https://git.do.srb2.org/KartKrew/RingRacers.git /home/ringracers/rr_git
 WORKDIR /home/ringracers/rr_git
@@ -38,7 +38,7 @@ RUN cmake --build --preset ninja-release
 ###
 
 FROM arm64v8/debian:bookworm as assets
-ARG RR_VER="v2.2"
+ARG RR_VER="v2.3"
 ARG ASSETS_URL="https://github.com/KartKrewDev/RingRacers/releases/download/${RR_VER}/Dr.Robotnik.s-Ring-Racers-${RR_VER}-Assets.zip"
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get -y install wget unzip
@@ -68,7 +68,7 @@ RUN apt-get update && apt-get install -y \
 RUN adduser --disabled-password -gecos "" ringracers
 USER ringracers
 
-ARG RR_VER="v2.2"
+ARG RR_VER="v2.3"
 ARG RR_PORT="5029"
 
 ENV RR_PORT=${RR_PORT}
