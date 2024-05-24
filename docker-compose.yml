@@ -2,7 +2,7 @@ version: "3"
 
 services:
   rr_server:
-    image: ringracer
+    image: siraceyt/ringracer:latest
     environment:
       - ADVERTISE="Yes"
     tty: true
