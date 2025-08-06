@@ -1,4 +1,4 @@
-FROM arm64v8/debian:bookworm as builder
+FROM arm64v8/debian:bookworm AS builder
 
 # Ref: https://git.do.srb2.org/KartKrew/RingRacers
 
@@ -37,7 +37,7 @@ RUN cmake --build --preset ninja-release
 
 ###
 
-FROM arm64v8/debian:bookworm as assets
+FROM arm64v8/debian:bookworm AS assets
 ARG RR_VER="v2.3"
 ARG ASSETS_URL="https://github.com/KartKrewDev/RingRacers/releases/download/${RR_VER}/Dr.Robotnik.s-Ring-Racers-${RR_VER}-Assets.zip"
 RUN apt-get update && apt-get upgrade -y
@@ -50,7 +50,7 @@ RUN rm Dr.Robotnik.s-Ring-Racers-${RR_VER}-Assets.zip
 
 ###
 
-FROM arm64v8/debian:bookworm as main
+FROM arm64v8/debian:bookworm AS main
 
 RUN apt-get update && apt-get install -y \
     libyuv0 \
@@ -65,8 +65,38 @@ RUN apt-get update && apt-get install -y \
     nano \
     && apt-get clean
 
-RUN adduser --disabled-password -gecos "" ringracers
-USER ringracers
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+ENV CHOOSEN_UID=$USER_UID
+ENV CHOOSEN_GID=$USER_GID
+
+
+#RUN groupadd 
+#	-o				## non unique
+#	-g ${USER_GID}	## groupid
+#	-r				## system
+#	ringracers
+#RUN useradd 
+#	-l 			## no-log-init
+#	-r 			## system
+#	-o			## non unique
+#	--create-home 
+#	--home-dir /home/ringracers 
+#	--uid $USER_UID
+#	--gid $USER_GID
+#	ringracers
+
+RUN groupadd -o -g ${USER_GID} -r ringracers
+RUN useradd -l -r -o --create-home --home-dir /home/ringracers --uid $USER_UID --gid $USER_GID ringracers
+#RUN chown -R $USER_UID:$USER_GID /home/ringracers/.ringracers
+RUN echo 'ringracers ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+
+USER $USER_UID:$USER_GID
+WORKDIR /home/ringracers/
+RUN mkdir -p /home/ringracers/.ringracers
+VOLUME /home/ringracers/.ringracers
 
 ARG RR_VER="v2.3"
 ARG RR_PORT="5029"
@@ -74,7 +104,6 @@ ARG RR_PORT="5029"
 ENV RR_PORT=${RR_PORT}
 ENV ADVERTISE="Yes"
 
-WORKDIR /home/ringracers/
 COPY --chown=ringracers --from=assets /RingRacers/ ./
 COPY --chown=ringracers --from=builder /home/ringracers/rr_git/build/ninja-release/bin/ringracers_${RR_VER} ringracers
 
@@ -82,6 +111,8 @@ EXPOSE ${RR_PORT}/udp
 
 COPY --chown=ringracers entrypoint.sh ./
 RUN chmod +x ./entrypoint.sh
+
+USER root
 
 ENTRYPOINT ./entrypoint.sh
 HEALTHCHECK --interval=30s --start-period=30s CMD "./entrypoint.sh monitor"

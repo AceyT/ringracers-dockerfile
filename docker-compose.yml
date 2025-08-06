@@ -2,9 +2,17 @@ version: "3"
 
 services:
   rr_server:
-    image: siraceyt/ringracer:latest
+    build:
+      context: .
+      args:
+        USER_UID: ${HOST_UID}
+        USER_GID: ${HOST_GID}
+    image: ringracer
+    #image: siraceyt/ringracers:2.3
     environment:
       - ADVERTISE="Yes"
+      #- CHOOSEN_UID=1000
+      #- CHOOSEN_GID=1000
     tty: true
     stdin_open: true
     ports:
